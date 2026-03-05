@@ -8,7 +8,8 @@ export function middleware(request: NextRequest) {
   // Define allowed origins including localhost and Vercel deployment URL
   const allowedOrigins = [
     'http://localhost:3000',
-    'https://vahan-chatbot.vercel.app'
+    'https://vahan-chatbot.vercel.app',
+    'https://vahan-chatbot-iog3.vercel.app'
   ]
 
   // Check if the origin is allowed
