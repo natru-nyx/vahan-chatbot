@@ -141,7 +141,7 @@ const GeminiStream = async (messages: Message[]): Promise<ReadableStream> => {
   Use bullet points or numbered lists for multi-part answers. User message: ${userMessage}. FAQ Document: ${FAQINFO}`;
 
   const response = await ai.models.generateContentStream({
-    model: "gemini-2.0-flash-lite",
+    model: "gemini-2.5-flash-lite",
     contents: messageToSend,
   });
 
