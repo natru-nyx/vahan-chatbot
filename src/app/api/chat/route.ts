@@ -1,11 +1,7 @@
 import { Message } from "@/types";
 import GeminiStream from "@/utils";
 
-export const config = {
-  runtime: "edge",
-};
-
-const handler = async (req: Request): Promise<Response> => {
+export async function POST(req: Request): Promise<Response> {
   try {
     const body = await req.json();
     const messages = body.messages as Message[];
@@ -25,11 +21,11 @@ const handler = async (req: Request): Promise<Response> => {
 
     const stream = await GeminiStream(messagesToSend);
 
-    return new Response(stream);
+    return new Response(stream, {
+      headers: { "Content-Type": "text/plain; charset=utf-8" },
+    });
   } catch (error) {
     console.error(error);
     return new Response("Error", { status: 500 });
   }
-};
-
-export default handler;
+}

@@ -4,7 +4,7 @@ import { GoogleGenAI } from "@google/genai";
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
 
-const GeminiStream = async (messages: Message[]) => {
+const GeminiStream = async (messages: Message[]): Promise<ReadableStream> => {
   const userMessage = messages[messages.length - 1].content;
 
   let FAQINFO = `
@@ -145,13 +145,23 @@ const GeminiStream = async (messages: Message[]) => {
     contents: messageToSend,
   });
 
-  let fullResponse = "";
+  const encoder = new TextEncoder();
 
-  for await (const chunk of response) {
-    fullResponse += chunk.text;
-  }
-
-  return fullResponse;
+  return new ReadableStream({
+    async start(controller) {
+      try {
+        for await (const chunk of response) {
+          const text = chunk.text;
+          if (text) {
+            controller.enqueue(encoder.encode(text));
+          }
+        }
+        controller.close();
+      } catch (error) {
+        controller.error(error);
+      }
+    },
+  });
 };
 
 export default GeminiStream;
