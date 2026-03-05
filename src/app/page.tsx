@@ -2,7 +2,6 @@
 
 import { Chat } from "@/components/Chat/Chat";
 import { Message } from "../types";
-import Head from "next/head";
 import { useEffect, useRef, useState } from "react";
 
 export default function Home() {
@@ -69,7 +68,7 @@ export default function Home() {
     setMessages(updatedMessages);
     setLoading(true);
 
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/chat`, {
+    const response = await fetch("/api/chat", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
