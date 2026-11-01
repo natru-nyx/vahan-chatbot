@@ -1,37 +1,41 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Vahan Policy Assistant
 
-## Getting Started
+A chatbot that answers employee questions about company policy (leave, expenses, WFH, compensation, conduct, etc.) and cites the exact policy code it's answering from.
 
-First, run the development server:
+**Live demo:** https://vahan-chatbot-iog3.vercel.app
+
+Try: *"How many sick days do I get?"*, *"Can I work from abroad for two weeks?"*, *"What's the travel reimbursement limit?"*
+
+## How it works
+
+- The policy handbook is passed to **Gemini 2.5 Flash-Lite** as grounding context, with instructions to answer only from it and name the section it used. If something isn't covered, it says so instead of guessing.
+- Replies stream token-by-token into the chat UI.
+- A 👎 on an answer logs the question and reply to a Google Sheet, so weak answers can be reviewed and the handbook improved.
+
+> The policy content is a **fictional** handbook written for this demo; it isn't any real company's internal policy.
+
+## Stack
+
+Next.js 15 (App Router) · React 18 · TypeScript · Tailwind · Google Gemini API · Google Sheets API · Vercel
+
+## Running locally
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+cp .env.example .env.local   # then fill in the values
+npm run dev                  # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+| Variable | Needed for |
+| --- | --- |
+| `GEMINI_API_KEY` | Chat (free key from Google AI Studio) |
+| `GOOGLE_SHEETS_CLIENT_EMAIL`, `GOOGLE_SHEETS_PRIVATE_KEY`, `GOOGLE_SHEETS_SPREADSHEET_ID` | Optional – feedback logging |
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Layout
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-# vahan-chatbot
+```
+src/app/api/chat       streaming chat endpoint
+src/app/api/feedback   logs 👎 answers to Google Sheets
+src/components/Chat    chat UI
+src/utils              Gemini call + policy handbook
+```
